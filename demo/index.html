@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>x-autocomplete - X-Tag</title>
+    <link rel="stylesheet" type="text/css" href="/dist/inativ-x.css"/>
+    <style>
+        .x-autocomplete-toggle:after {
+            background-image: url("/src/images/btn_list.png");
+        }
+    </style>
+</head>
+
+
+<body>
+    <div>Autocomplete avec sélection forcée :</div>
+    <x-autocomplete forceSelection></x-autocomplete>
+    <div>Autocomplete sans sélection forcée :</div>
+    <x-autocomplete></x-autocomplete>
+</body>
+
+<script type="text/javascript" src="/demo/x-tag-core.js"></script>      
+<script type="text/javascript" src="/dist/main.js"></script>      
+<script>
+    document.addEventListener('DOMComponentsLoaded', function(){
+        var autocompletes = document.querySelectorAll("x-autocomplete");
+        var forEach = Array.prototype.forEach;
+        
+        forEach.call(autocompletes, function(autocomplete) {
+            
+            autocomplete.suggestionTemplate = function(value) {
+                return 'joli ' + value.label;
+            }
+            autocomplete.values = 'Lorem ipsum dolor sit amet consectetur adipiscing elit Donec vitae sagittis nisl sit amet gravida nulla Duis molestie leo dolor vitae malesuada lectus dapibus eget'
+                .split(' ')
+                .map(function(str) {
+                    return {
+                        label: 'x' + str,
+                        code: str
+                    }
+                });
+        });
+    });
+</script>
+
+</html>
