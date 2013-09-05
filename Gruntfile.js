@@ -52,7 +52,8 @@ module.exports = function(grunt) {
         browserify: {
             main: {
                 files: {
-                    'test/testbuild.js': ['test/test.js']
+                    'test/testbuild.js': ['test/test.js'],
+                    'demo/main.js': ['src/main.js']
                 }
             }
         },

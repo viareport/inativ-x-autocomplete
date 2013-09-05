@@ -1,6 +1,5 @@
 .sass-cache/
-demo/lib.js
-demo/deps.js
+demo/main.js
 dist/*
 node_modules/
 test/testbuild.js
