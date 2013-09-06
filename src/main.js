@@ -87,7 +87,7 @@
 
             selectedIndex: {
                 set: function(selectedIndex) {
-                    if(this._selectedIndex !== null) {
+                    if(this._selectedIndex !== null && this.getSuggestionNodes()[this._selectedIndex]) {
                         this.getSuggestionNodes()[this._selectedIndex].className = '';
                     }
                     this._selectedIndex = selectedIndex;
@@ -213,8 +213,10 @@
                 that.toggleSuggestions();
             },
             'click:delegate(li)' : function(e) {
+                console.log("DELEGATE " + e);
                 var autocomplete = this.parentNode.parentNode;
                 autocomplete.pick(this);
+                e.stopPropagation();
             },
             'mouseover:delegate(li)' : function(e) {
                 var autocomplete = this.parentNode.parentNode;
