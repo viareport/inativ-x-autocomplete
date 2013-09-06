@@ -40,6 +40,8 @@
                     } else if (this.hasAttribute('forceSelection')) {
                         this._value = null;
                         this._input.value = this._lastValid || '';
+                    } else {
+                        this.showSuggestions();
                     }
                 }.bind(this);
 
@@ -210,7 +212,7 @@
             },
             'click:delegate(.x-autocomplete-toggle)' : function(e) {
                 var that = this.parentNode;
-                that.toggleSuggestions();
+                that.search('');
             },
             'click:delegate(li)' : function(e) {
                 var autocomplete = this.parentNode.parentNode;
