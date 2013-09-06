@@ -213,7 +213,6 @@
                 that.toggleSuggestions();
             },
             'click:delegate(li)' : function(e) {
-                console.log("DELEGATE " + e);
                 var autocomplete = this.parentNode.parentNode;
                 autocomplete.pick(this);
                 e.stopPropagation();
