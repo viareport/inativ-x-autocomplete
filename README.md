@@ -1,6 +1,6 @@
 # A propos
 
-Autocomplete
+Un superbe autocomplete
 
 # Tâches grunts
 
