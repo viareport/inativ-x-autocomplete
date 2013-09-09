@@ -113,19 +113,23 @@
         methods: {
 
             suggest: function(request) {
-                var regExp = new RegExp('^' + escapeRegExp(request), "i");
-                this.suggestions = this.values.filter(function (value) {
-                    if (typeof value === 'object') {
-                        for (var key in value) {
-                            if (regExp.test(value[key])) {
-                                return true;
+                if (request) {
+                    var regExp = new RegExp('^' + escapeRegExp(request), "i");
+                    this.suggestions = this.values.filter(function (value) {
+                        if (typeof value === 'object') {
+                            for (var key in value) {
+                                if (regExp.test(value[key])) {
+                                    return true;
+                                }
                             }
+                            return false;
+                        } else {
+                            return regExp.test(value);
                         }
-                        return false;
-                    } else {
-                        return regExp.test(value);
-                    }
-                });
+                    });
+                } else {
+                    this.suggestions = this.values;
+                }
             },
 
             getSuggestionNodes: function() {
