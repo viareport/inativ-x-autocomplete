@@ -179,7 +179,6 @@
                     }
                 } else if (! this.isOpen()) {
                     this.search(this._input.value);
-                    this.selectedIndex = 0;
                 }  
             },
             isOpen: function() {
