@@ -30,6 +30,8 @@ x-autocomplete {
         border-bottom: 1px solid #E6E6E6;
 
         color: black;
+        text-align: left;
+        font-weight: normal;
 
         &.x-autocomplete-selected, &:hover {
             background: #0C97E1;

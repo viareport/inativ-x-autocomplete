@@ -26,6 +26,11 @@
                     return value;
                 };
 
+                //default classes
+                this.suggestionClasses = function(value) {
+                    return value;
+                };
+
                 this._onSearchCompleted = function() {
                     if (this.suggestions.length) {
                         this.showSuggestions();
@@ -58,7 +63,7 @@
                 window.document.removeEventListener('click', this._clickOutsideListener);
             },
             attributeChanged: function attributedChanged(attribute) {
-                
+
             }
         },
         accessors: {
@@ -139,7 +144,7 @@
             showSuggestions: function() {
 
                 this._suggestionsNode.innerHTML = this.suggestions.map(function(value) {
-                    return '<li>' + this.suggestionTemplate(value) + '</li>';
+                    return '<li><span  class="'+ this.suggestionClasses(value)+'">' + this.suggestionTemplate(value) + '</span></li>';
                 }.bind(this)).join('\n');
 
                 this._suggestionsNode.style.display = 'block';
@@ -163,7 +168,7 @@
             cancel: function() {
                 if(this.isOpen()) {
                     //this.value = this._initialValue;
-                    
+
                     this.toggleSuggestions();
                 }
             },
@@ -179,7 +184,7 @@
                     }
                 } else if (! this.isOpen()) {
                     this.search(this._input.value);
-                }  
+                }
             },
             isOpen: function() {
                 return this._suggestionsNode.style.display !== 'none';
