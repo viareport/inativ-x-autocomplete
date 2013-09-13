@@ -28,7 +28,7 @@
 
                 //default classes
                 this.suggestionClasses = function(value) {
-                    return value;
+                    return '';
                 };
 
                 this._onSearchCompleted = function() {
@@ -95,11 +95,11 @@
             selectedIndex: {
                 set: function(selectedIndex) {
                     if(this._selectedIndex !== null && this.getSuggestionNodes()[this._selectedIndex]) {
-                        this.getSuggestionNodes()[this._selectedIndex].className = '';
+                        this.getSuggestionNodes()[this._selectedIndex].classList.remove('x-autocomplete-selected');
                     }
                     this._selectedIndex = selectedIndex;
                     var selectedNode = this.getSuggestionNodes()[this._selectedIndex];
-                    selectedNode.className = 'x-autocomplete-selected';
+                    selectedNode.classList.add('x-autocomplete-selected');
                 },
                 get: function() {
                     return this._selectedIndex;
@@ -144,8 +144,8 @@
             showSuggestions: function() {
 
                 this._suggestionsNode.innerHTML = this.suggestions.map(function(value) {
-                    return '<li><span  class="'+ this.suggestionClasses(value)+'">' + this.suggestionTemplate(value) + '</span></li>';
-                }.bind(this)).join('\n');
+                    return '<li class="'+ this.suggestionClasses(value)+'">' + this.suggestionTemplate(value) + '</li>';
+                }.bind(this)).join('');
 
                 this._suggestionsNode.style.display = 'block';
             },
