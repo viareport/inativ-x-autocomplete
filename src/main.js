@@ -57,10 +57,10 @@
                 }.bind(this);
             },
             inserted: function inserted() {
-                window.document.addEventListener('click', this._clickOutsideListener);
+                window.document.addEventListener('click', this._clickOutsideListener, false);
             },
             removed: function removed() {
-                window.document.removeEventListener('click', this._clickOutsideListener);
+                window.document.removeEventListener('click', this._clickOutsideListener, false);
             },
             attributeChanged: function attributedChanged(attribute) {
 
