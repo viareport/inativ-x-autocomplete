@@ -55,6 +55,32 @@ testSuite.addTest("Autocomplete avec une fonction de recherche ( autocomplete.se
 
 });
 
+testSuite.addTest("Lorsqu'on clique en dehors de l'autocomplete, (en particulier dans un input) alors que celui-ci est ouvert, il doit se fermer", function(scenario, asserter) {
+
+    //Given
+    var input = document.createElement('input');
+    input.classList.add('input-outside-test');
+    document.body.appendChild(input);
+    scenario.exec(function() {
+        var autocomplete = document.querySelector('x-autocomplete');
+
+        autocomplete.values = ['aa', 'ab', 'b', 'c', 'd a'];
+    });
+    scenario.fill('x-autocomplete input', 'a');// l'événement 'change' déclenche pas l'ouverture de la liste ( .keyboard('x-autocomplete input',"keyup", "A", 65) marche pas)
+    scenario.keyboard('x-autocomplete input',"keyup", "Down", 28);
+    asserter.assertTrue(
+        count("x-autocomplete ul", 1), 'La liste des suggestions doit apparaître');
+
+    //When
+    scenario.click(".input-outside-test");
+
+    //Then
+    asserter.assertTrue(function() {
+        return document.querySelector("x-autocomplete ul").style.display === 'none';
+    }, 'La liste des suggestions doit disparaitre');
+
+});
+
 document.addEventListener('DOMComponentsLoaded', function(){
     testSuite.run();
 });
