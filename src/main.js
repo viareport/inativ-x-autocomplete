@@ -220,7 +220,7 @@
             },
             'click:delegate(.x-autocomplete-toggle)' : function(e) {
                 var that = this.parentNode;
-                that.search('');
+                that.toggleSuggestions();
             },
             'click:delegate(li)' : function(e) {
                 var autocomplete = this.parentNode.parentNode;

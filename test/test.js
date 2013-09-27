@@ -81,6 +81,38 @@ testSuite.addTest("Lorsqu'on clique en dehors de l'autocomplete, (en particulier
 
 });
 
+testSuite.addTest("Conservation de la donnée saisie en cas de click outside + réutilisation de cette valeur en cas de retour sur l'autocomplete", function(scenario, asserter) {
+
+    //Given
+    var input = document.createElement('input');
+    input.classList.add('input-outside-test');
+    document.body.appendChild(input);
+
+    var keySet = 'a';
+
+    scenario.exec(function() {
+        document.querySelector('x-autocomplete').values = ['aa', 'ab', 'b', 'c', 'd a'];
+    });
+    scenario.fill('x-autocomplete input', keySet);
+
+    //When
+    scenario.click(".input-outside-test");
+
+    //Then
+    asserter.assertTrue(function() {
+        return document.querySelector("x-autocomplete ul").style.display === 'none';
+    }, 'La liste des suggestions doit disparaitre');
+    asserter.assertTrue(function() {
+        return document.querySelector('x-autocomplete')._input.value === keySet;
+    }, 'La valeur de l\'input doit être conservée au click-outside');
+
+    // On revient sur l'auto-complete et on valide qu'on prend bien la précédente saisie en compte
+    scenario.click('x-autocomplete .x-autocomplete-toggle').exec(function() {debugger;});
+    asserter.assertTrue(count("x-autocomplete ul", 1), 'La liste des suggestions doit apparaître');
+    asserter.assertTrue(count("x-autocomplete ul li", 2), 'La liste des suggestions ne doit proposer que 2 valeurs');
+
+});
+
 document.addEventListener('DOMComponentsLoaded', function(){
     testSuite.run();
 });
