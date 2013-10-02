@@ -218,6 +218,13 @@
                         this.search(this._input.value);
                 }
             },
+            'keydown' : function(e) {
+                switch(e.keyCode) {
+                case 9 :  // Tab
+                    this.cancel();
+                    break;
+                }
+            },
             'click:delegate(.x-autocomplete-toggle)' : function(e) {
                 var that = this.parentNode;
                 that.toggleSuggestions();
