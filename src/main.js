@@ -202,20 +202,20 @@
         events: {
             'keyup' : function(e) {
                 switch(e.keyCode) {
-                    case 13: // Enter
-                        this.pick();
-                        break;
-                    case 27 : // Escape
-                        this.cancel();
-                        break;
-                    case 38: // Up
-                        this.selectPrevious();
-                        break;
-                    case 40: // Down
-                        this.selectNext();
-                        break;
-                    default:
-                        this.search(this._input.value);
+                case 13: // Enter
+                    this.pick();
+                    break;
+                case 27 : // Escape
+                    this.cancel();
+                    break;
+                case 38: // Up
+                    this.selectPrevious();
+                    break;
+                case 40: // Down
+                    this.selectNext();
+                    break;
+                default:
+                    this.search(this._input.value);
                 }
             },
             'keydown' : function(e) {
@@ -241,6 +241,11 @@
             'mouseover:delegate(li)' : function(e) {
                 var autocomplete = this.parentNode.parentNode;
                 autocomplete.selectedIndex = Array.prototype.indexOf.call(autocomplete.getSuggestionNodes(), this);
+            },
+            'click' : function(e) {
+                var input = this._input;
+                input.focus();
+                input.setSelectionRange(0, input.value.length);                         
             }
         }
     });
