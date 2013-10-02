@@ -34,7 +34,7 @@ x-autocomplete {
         font-weight: normal;
         white-space: normal;
 
-        &.x-autocomplete-selected, &:hover {
+        &.x-autocomplete-selected {
             background: #0C97E1;
             color: white;
         }
