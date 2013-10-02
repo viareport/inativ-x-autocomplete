@@ -22,7 +22,8 @@
     "grunt-browserify": "~1.2.4",
     "grunt-bumpup": "~0.2.0",
     "grunt-testem": "~0.3.6",
-    "spatester": "0.0.1"
+    "spatester": "1.x.x",
+    "grunt-mkdir": "~0.1.1"
   },
   "engines": {
     "node": ">=0.4.0"

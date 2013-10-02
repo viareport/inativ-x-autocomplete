@@ -6,6 +6,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-mkdir');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-bumpup');
     grunt.loadNpmTasks('grunt-testem');
@@ -14,7 +15,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         
         clean: {
-            main: ['dist/*.js', 'dist/*.css', 'testem*json']
+            main: ['dist/*.js', 'dist/*.css', 'testem*json', 'test-result/*', 'test/testbuild.js']
         },
         compass: {
             main: {
@@ -75,6 +76,13 @@ module.exports = function(grunt) {
                 src: [ 'test/TestemSuite.html' ],
                 dest: 'test-result/testem-ci.tap'
             }
+        },
+        mkdir: {
+            'test-result': {
+                options: {
+                    create: ['test-result']
+                }
+            }
         }
     });
 
@@ -87,7 +95,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', ['clean', 'browserify', 'jshint', 'compass', 'copy']);
     grunt.registerTask('demo', ['build', 'launchDemo']);
-    grunt.registerTask('test', ['build', 'testem']);
+    grunt.registerTask('test', ['build', 'mkdir:test-result', 'testem']);
     grunt.registerTask('dist', ['test', 'bumpup']);
 
     grunt.registerTask('default', ['build', 'watch']);

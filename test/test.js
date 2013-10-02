@@ -4,7 +4,7 @@ function count(selector, expected) {
     };
 }
 
-var TestSuite = require('spatester').TestSuite;
+var TestSuite = require('spatester');
 
 var testSuite = new TestSuite("Autocomplete test", {
     setUp: function() {
@@ -18,27 +18,26 @@ var testSuite = new TestSuite("Autocomplete test", {
     }
 });
 
-Testem.useCustomAdapter(function(socket) {
-    testSuite.setSocket(socket);
-});
-
 testSuite.addTest("Autocomplete avec une liste de valeurs ( autocomplete.values = [...] )", function(scenario, asserter) {
+    // Given
     scenario.exec(function() {
         var autocomplete = document.querySelector('x-autocomplete');
 
         autocomplete.values = ['aa', 'ab', 'b', 'c', 'd a'];
     });
+
+    // When
     scenario.fill('x-autocomplete input', 'a');// l'événement 'change' déclenche pas l'ouverture de la liste ( .keyboard('x-autocomplete input',"keyup", "A", 65) marche pas)
     scenario.keyboard('x-autocomplete input',"keyup", "Down", 28);
-    asserter.assertTrue(
-        count("x-autocomplete ul", 1), 'La liste des suggestions doit apparaître');
-    asserter.assertTrue(
-        count("x-autocomplete ul li", 2), 'La liste des suggestions doit contenir 2 éléments ("aa" et "ab")');
+
+    // Then
+    asserter.expect('x-autocomplete').child('ul').to.have.nodeLength(1);
+    asserter.expect('x-autocomplete ul').children('li').to.have.nodeLength(2);
 });
 
 
 testSuite.addTest("Autocomplete avec une fonction de recherche ( autocomplete.search = function(q){ autocomplete.suggestions = [...] } )", function(scenario, asserter) {
-
+    // Given
     scenario.exec(function() {
         var autocomplete = document.querySelector('x-autocomplete');
 
@@ -46,12 +45,14 @@ testSuite.addTest("Autocomplete avec une fonction de recherche ( autocomplete.se
             this.suggestions = ['a', 'b', 'c'];
         }.bind(autocomplete);
     });
+
+    // When
     scenario.fill('x-autocomplete input', 'x');
     scenario.keyboard('x-autocomplete input',"keyup", "Down", 28);
-    asserter.assertTrue(
-        count("x-autocomplete ul", 1), 'La liste des suggestions doit apparaître');
-    asserter.assertTrue(
-        count("x-autocomplete ul li", 3), 'La liste des suggestions doit contenir 3 éléments (a, b, c)');
+
+    // Then
+    asserter.expect('x-autocomplete').child('ul').to.have.nodeLength(1);
+    asserter.expect('x-autocomplete ul').children('li').to.have.nodeLength(3);
 
 });
 
@@ -68,17 +69,14 @@ testSuite.addTest("Lorsqu'on clique en dehors de l'autocomplete, (en particulier
     });
     scenario.fill('x-autocomplete input', 'a');// l'événement 'change' déclenche pas l'ouverture de la liste ( .keyboard('x-autocomplete input',"keyup", "A", 65) marche pas)
     scenario.keyboard('x-autocomplete input',"keyup", "Down", 28);
-    asserter.assertTrue(
-        count("x-autocomplete ul", 1), 'La liste des suggestions doit apparaître');
+
+    asserter.expect('x-autocomplete').child('ul').to.have.nodeLength(1);
 
     //When
     scenario.click(".input-outside-test");
 
     //Then
-    asserter.assertTrue(function() {
-        return document.querySelector("x-autocomplete ul").style.display === 'none';
-    }, 'La liste des suggestions doit disparaitre');
-
+    asserter.expect('x-autocomplete ul').to.be.hidden();
 });
 
 testSuite.addTest("Conservation de la donnée saisie en cas de click outside + réutilisation de cette valeur en cas de retour sur l'autocomplete", function(scenario, asserter) {
@@ -99,17 +97,14 @@ testSuite.addTest("Conservation de la donnée saisie en cas de click outside + r
     scenario.click(".input-outside-test");
 
     //Then
-    asserter.assertTrue(function() {
-        return document.querySelector("x-autocomplete ul").style.display === 'none';
-    }, 'La liste des suggestions doit disparaitre');
-    asserter.assertTrue(function() {
-        return document.querySelector('x-autocomplete')._input.value === keySet;
-    }, 'La valeur de l\'input doit être conservée au click-outside');
+    asserter.expect('x-autocomplete ul').to.be.hidden();
+    asserter.expect('x-autocomplete input').to.have.value(keySet);
 
     // On revient sur l'auto-complete et on valide qu'on prend bien la précédente saisie en compte
     scenario.click('x-autocomplete .x-autocomplete-toggle').exec(function() {debugger;});
-    asserter.assertTrue(count("x-autocomplete ul", 1), 'La liste des suggestions doit apparaître');
-    asserter.assertTrue(count("x-autocomplete ul li", 2), 'La liste des suggestions ne doit proposer que 2 valeurs');
+
+    asserter.expect('x-autocomplete').child('ul').to.have.nodeLength(1);
+    asserter.expect('x-autocomplete ul').children('li').to.have.nodeLength(2);
 
 });
 
