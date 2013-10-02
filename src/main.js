@@ -223,6 +223,10 @@
                 case 9 :  // Tab
                     this.cancel();
                     break;
+                case 38: // Up
+                case 40: // Down
+                    e.preventDefault();
+                    break;
                 }
             },
             'click:delegate(.x-autocomplete-toggle)' : function(e) {
