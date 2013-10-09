@@ -199,7 +199,6 @@
                 }
             },
             setFocus: function() {
-                console.log(this._input);
                 this._input.focus();
                 this._input.setSelectionRange(0, this._input.value.length);
             }
