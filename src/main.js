@@ -197,6 +197,11 @@
                 } else {
                     this.search(this._input.value);
                 }
+            },
+            setFocus: function() {
+                console.log(this._input);
+                this._input.focus();
+                this._input.setSelectionRange(0, this._input.value.length);
             }
         },
         events: {
@@ -243,13 +248,10 @@
                 autocomplete.selectedIndex = Array.prototype.indexOf.call(autocomplete.getSuggestionNodes(), this);
             },
             'click' : function(e) {
-                var input = this._input;
-                input.focus();
-                input.setSelectionRange(0, input.value.length);                         
+                this.setFocus();
             }
         }
     });
-
 
     function escapeRegExp(string) {
         return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
