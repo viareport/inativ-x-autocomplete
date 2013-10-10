@@ -119,7 +119,14 @@
         },
         methods: {
             changeSuggestionsPosition: function changeSuggestionsPosition() {
-                var domElementMaxHeightValue = this.offsetTop + calculateMaximumHeight(this);
+                var clientRects = this.getClientRects();
+                var top = 0;
+                if (clientRects.length) {
+                    top = clientRects[0].top;
+                } else {
+                    top = this.offsetTop;
+                }
+                var domElementMaxHeightValue = top + calculateMaximumHeight(this);
                 var documentBodyMaxHeightValue = window.innerHeight;
                 var classList = this._suggestionsNode.classList;
                 for (var pos in position) {
@@ -272,14 +279,7 @@
         domXAutocomplete.suggestionClasses = currentDomXAutoComplete.suggestionClasses;
         document.body.appendChild(domXAutocomplete);
         domXAutocomplete.showSuggestions();
-        var clientRects = currentDomXAutoComplete.getClientRects();
-        var top = 0;
-        if (clientRects.length) {
-            top = clientRects[0].top + clientRects[0].height;
-        } else {
-            top = domXAutocomplete.offsetTop + domXAutocomplete.offsetHeight;
-        }
-        var maxHeightValue = top + domXAutocomplete._suggestionsNode.offsetHeight;
+        var maxHeightValue = domXAutocomplete.offsetHeight + domXAutocomplete._suggestionsNode.offsetHeight;
         document.body.removeChild(domXAutocomplete);
         return maxHeightValue;
     }
