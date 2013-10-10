@@ -40,6 +40,7 @@ testSuite.addTest("Autocomplete avec une fonction de recherche ( autocomplete.se
     // Given
     scenario.exec(function() {
         var autocomplete = document.querySelector('x-autocomplete');
+        autocomplete.values = ['aa', 'ab', 'b', 'c', 'd a'];
 
         autocomplete.search = function(request) {
             this.suggestions = ['a', 'b', 'c'];

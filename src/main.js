@@ -120,7 +120,7 @@
         methods: {
             changeSuggestionsPosition: function changeSuggestionsPosition() {
                 var domElementMaxHeightValue = this.offsetTop + calculateMaximumHeight(this);
-                var documentBodyMaxHeightValue = document.body.offsetTop + document.body.offsetHeight;
+                var documentBodyMaxHeightValue = window.innerHeight;
                 var classList = this._suggestionsNode.classList;
                 for (var pos in position) {
                     classList.remove(position[pos]);
@@ -264,15 +264,22 @@
     });
 
     function calculateMaximumHeight(currentDomXAutoComplete) {
-        var domXAutocomplete = currentDomXAutoComplete.cloneNode(true);
+        var domXAutocomplete = document.createElement('x-autocomplete');
         domXAutocomplete.style.display = "none";
         domXAutocomplete._values = currentDomXAutoComplete._values;
-        domXAutocomplete._suggestionValues = currentDomXAutoComplete._suggestionValues;
+        domXAutocomplete._suggestionValues = currentDomXAutoComplete._values;
         domXAutocomplete.suggestionTemplate = currentDomXAutoComplete.suggestionTemplate;
         domXAutocomplete.suggestionClasses = currentDomXAutoComplete.suggestionClasses;
         document.body.appendChild(domXAutocomplete);
         domXAutocomplete.showSuggestions();
-        var maxHeightValue = domXAutocomplete.offsetHeight + domXAutocomplete._suggestionsNode.offsetHeight;
+        var clientRects = currentDomXAutoComplete.getClientRects();
+        var top = 0;
+        if (clientRects.length) {
+            top = clientRects[0].top + clientRects[0].height;
+        } else {
+            top = domXAutocomplete.offsetTop + domXAutocomplete.offsetHeight;
+        }
+        var maxHeightValue = top + domXAutocomplete._suggestionsNode.offsetHeight;
         document.body.removeChild(domXAutocomplete);
         return maxHeightValue;
     }
