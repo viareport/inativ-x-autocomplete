@@ -18,8 +18,10 @@
     <x-autocomplete forceSelection></x-autocomplete>
     <div>Autocomplete sans sélection forcée :</div>
     <x-autocomplete></x-autocomplete>
-    <div>Autocomplete avec la liste de suggestions en haut :</div>
-    <x-autocomplete suggestionsPosition="up"></x-autocomplete>
+    <div style='position:absolute;bottom:0'>
+        <div>Autocomplete avec la liste de suggestions en haut :</div>
+        <x-autocomplete></x-autocomplete>
+    </div>
 </body>
 
 <script type="text/javascript" src="/demo/x-tag-core.js"></script>      

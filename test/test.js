@@ -112,9 +112,10 @@ testSuite.addTest("Verification de la position de la liste de choix : up", funct
     // Given
     scenario.exec(function () {
         var autocomplete = document.querySelector('x-autocomplete');
-
+        //On positionne l'autocomplete en bas de la page
+        autocomplete.style.position="absolute";
+        autocomplete.style.bottom = 0;
         autocomplete.values = ['aa', 'ab', 'b', 'c', 'd a'];
-        autocomplete.setAttribute('suggestionsPosition','up');
     });
 
     // When
@@ -122,7 +123,6 @@ testSuite.addTest("Verification de la position de la liste de choix : up", funct
 
     // Then
     asserter.assertTrue(function () {
-        debugger;
         var input = document.querySelector("x-autocomplete input");
         var ul = document.querySelector("x-autocomplete ul");
         return input.offsetTop > ul.offsetTop;
@@ -133,7 +133,6 @@ testSuite.addTest("Verification de la position de la liste de choix : down", fun
     // Given
     scenario.exec(function () {
         var autocomplete = document.querySelector('x-autocomplete');
-
         autocomplete.values = ['aa', 'ab', 'b', 'c', 'd a'];
         autocomplete.setAttribute('suggestionsPosition', 'down');
     });

@@ -1,5 +1,6 @@
 (function () {
-    var position = ['up','down'];
+    var position = {UP:'up',DOWN:'down'};
+
     xtag.register('x-autocomplete', {
         lifecycle: {
             created: function created() {
@@ -13,7 +14,6 @@
 
                 this._suggestionsNode = document.createElement('ul');
 
-                this.changeSuggestionsPosition();
                 this._suggestionsNode.style.display = 'none';
                 this.appendChild(this._suggestionsNode);
 
@@ -21,7 +21,7 @@
 
                 // default search method (needs this.values being set)
                 this.search = this.suggest;
-
+                this.maximumHeight = 0;
                 //default template
                 this.suggestionTemplate = function (value) {
                     return value;
@@ -64,9 +64,6 @@
                 window.document.removeEventListener('click', this._clickOutsideListener, false);
             },
             attributeChanged: function attributedChanged(attribute) {
-                if (attribute === "suggestionsPosition") {
-                    this.changeSuggestionsPosition();
-                }
             }
         },
         accessors: {
@@ -74,6 +71,7 @@
                 set: function (values) {
                     this._values = values;
                     this._suggestionValues = values;
+                    this.changeSuggestionsPosition();
                 },
                 get: function () {
                     return this._values;
@@ -120,15 +118,16 @@
         },
         methods: {
             changeSuggestionsPosition: function changeSuggestionsPosition() {
-                var i = 0;
+                var domElementMaxHeightValue = this.offsetTop + calculateMaximumHeight(this);
+                var documentBodyMaxHeightValue = document.body.offsetTop + document.body.offsetHeight;
                 var classList = this._suggestionsNode.classList;
-                for(;i< position.length; i++) {
-                    classList.remove(position[i]);
+                for (var pos in position) {
+                    classList.remove(position[pos]);
                 }
-                if (this.getAttribute("suggestionsPosition")) {
-                    this._suggestionsNode.classList.add(this.getAttribute("suggestionsPosition"));
+                if (domElementMaxHeightValue > documentBodyMaxHeightValue) {
+                    this._suggestionsNode.classList.add(position.UP);
                 } else {
-                    this._suggestionsNode.classList.add("down");
+                    this._suggestionsNode.classList.add(position.DOWN);
                 }
             },
             suggest: function (request) {
@@ -150,13 +149,10 @@
                     this.suggestions = this.values;
                 }
             },
-
             getSuggestionNodes: function () {
                 return this._suggestionsNode.querySelectorAll('li');
             },
-
             showSuggestions: function () {
-
                 this._suggestionsNode.innerHTML = this.suggestions.map(function (value) {
                     return '<li class="' + this.suggestionClasses(value) + '">' + this.suggestionTemplate(value) + '</li>';
                 }.bind(this)).join('');
@@ -265,6 +261,20 @@
             }
         }
     });
+
+    function calculateMaximumHeight(currentDomXAutoComplete) {
+        var domXAutocomplete = currentDomXAutoComplete.cloneNode(true);
+        domXAutocomplete.style.display = "none";
+        domXAutocomplete._values = currentDomXAutoComplete._values;
+        domXAutocomplete._suggestionValues = currentDomXAutoComplete._suggestionValues;
+        domXAutocomplete.suggestionTemplate = currentDomXAutoComplete.suggestionTemplate;
+        domXAutocomplete.suggestionClasses = currentDomXAutoComplete.suggestionClasses;
+        document.body.appendChild(domXAutocomplete);
+        domXAutocomplete.showSuggestions();
+        var maxHeightValue = domXAutocomplete.offsetHeight + domXAutocomplete._suggestionsNode.offsetHeight;
+        document.body.removeChild(domXAutocomplete);
+        return maxHeightValue;
+    }
 
     function escapeRegExp(string) {
         return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
