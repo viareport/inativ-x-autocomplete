@@ -265,7 +265,7 @@
 
     function calculateMaximumHeight(currentDomXAutoComplete) {
         var domXAutocomplete = document.createElement('x-autocomplete');
-        domXAutocomplete.style.display = "none";
+        domXAutocomplete.style.visibility = "hidden";
         domXAutocomplete._values = currentDomXAutoComplete._values;
         domXAutocomplete._suggestionValues = currentDomXAutoComplete._values;
         domXAutocomplete.suggestionTemplate = currentDomXAutoComplete.suggestionTemplate;
