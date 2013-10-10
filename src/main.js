@@ -1,5 +1,5 @@
-(function(){
-
+(function () {
+    var position = ['up','down'];
     xtag.register('x-autocomplete', {
         lifecycle: {
             created: function created() {
@@ -12,26 +12,27 @@
                 this.appendChild(this._toggleSuggestions);
 
                 this._suggestionsNode = document.createElement('ul');
+
+                this.changeSuggestionsPosition();
                 this._suggestionsNode.style.display = 'none';
                 this.appendChild(this._suggestionsNode);
 
                 this._selectedIndex = null;
 
-
                 // default search method (needs this.values being set)
                 this.search = this.suggest;
 
                 //default template
-                this.suggestionTemplate = function(value) {
+                this.suggestionTemplate = function (value) {
                     return value;
                 };
 
                 //default classes
-                this.suggestionClasses = function(value) {
+                this.suggestionClasses = function (value) {
                     return '';
                 };
 
-                this._onSearchCompleted = function() {
+                this._onSearchCompleted = function () {
                     if (this.suggestions.length) {
                         this.showSuggestions();
                         this.selectedIndex = 0;
@@ -51,7 +52,7 @@
                 }.bind(this);
 
                 this._clickOutsideListener = function _clickOutsideListener(e) {
-                    if (this.isOpen() && this !== e.target && ! this.contains(e.target)) {
+                    if (this.isOpen() && this !== e.target && !this.contains(e.target)) {
                         this.toggleSuggestions();
                     }
                 }.bind(this);
@@ -63,22 +64,24 @@
                 window.document.removeEventListener('click', this._clickOutsideListener, false);
             },
             attributeChanged: function attributedChanged(attribute) {
-
+                if (attribute === "suggestionsPosition") {
+                    this.changeSuggestionsPosition();
+                }
             }
         },
         accessors: {
             values: {
-                set: function(values) {
+                set: function (values) {
                     this._values = values;
                     this._suggestionValues = values;
                 },
-                get: function() {
+                get: function () {
                     return this._values;
                 }
             },
 
             value: {
-                set: function(value) {
+                set: function (value) {
                     this._value = value;
                     this._input.value = this.suggestionTemplate(value);
 
@@ -87,37 +90,48 @@
                         bubbles: false
                     }));
                 },
-                get: function() {
+                get: function () {
                     return this._value;
                 }
             },
 
             selectedIndex: {
-                set: function(selectedIndex) {
-                    if(this._selectedIndex !== null && this.getSuggestionNodes()[this._selectedIndex]) {
+                set: function (selectedIndex) {
+                    if (this._selectedIndex !== null && this.getSuggestionNodes()[this._selectedIndex]) {
                         this.getSuggestionNodes()[this._selectedIndex].classList.remove('x-autocomplete-selected');
                     }
                     this._selectedIndex = selectedIndex;
                     var selectedNode = this.getSuggestionNodes()[this._selectedIndex];
                     selectedNode.classList.add('x-autocomplete-selected');
                 },
-                get: function() {
+                get: function () {
                     return this._selectedIndex;
                 }
             },
             suggestions: {
-                set: function(values) {
+                set: function (values) {
                     this._suggestionValues = values;
                     this._onSearchCompleted();
                 },
-                get: function() {
+                get: function () {
                     return this._suggestionValues;
                 }
             }
         },
         methods: {
-
-            suggest: function(request) {
+            changeSuggestionsPosition: function changeSuggestionsPosition() {
+                var i = 0;
+                var classList = this._suggestionsNode.classList;
+                for(;i< position.length; i++) {
+                    classList.remove(position[i]);
+                }
+                if (this.getAttribute("suggestionsPosition")) {
+                    this._suggestionsNode.classList.add(this.getAttribute("suggestionsPosition"));
+                } else {
+                    this._suggestionsNode.classList.add("down");
+                }
+            },
+            suggest: function (request) {
                 if (request) {
                     var regExp = new RegExp('^' + escapeRegExp(request), "i");
                     this.suggestions = this.values.filter(function (value) {
@@ -137,20 +151,20 @@
                 }
             },
 
-            getSuggestionNodes: function() {
+            getSuggestionNodes: function () {
                 return this._suggestionsNode.querySelectorAll('li');
             },
 
-            showSuggestions: function() {
+            showSuggestions: function () {
 
-                this._suggestionsNode.innerHTML = this.suggestions.map(function(value) {
-                    return '<li class="'+ this.suggestionClasses(value)+'">' + this.suggestionTemplate(value) + '</li>';
+                this._suggestionsNode.innerHTML = this.suggestions.map(function (value) {
+                    return '<li class="' + this.suggestionClasses(value) + '">' + this.suggestionTemplate(value) + '</li>';
                 }.bind(this)).join('');
 
                 this._suggestionsNode.style.display = 'block';
             },
-            pick: function(selectedNode) {
-                if(this.isOpen()) {
+            pick: function (selectedNode) {
+                if (this.isOpen()) {
                     var selectedValue, selectedIndex;
                     if (selectedNode) {
                         selectedIndex = Array.prototype.indexOf.call(this.getSuggestionNodes(), selectedNode);
@@ -165,88 +179,88 @@
                     this.toggleSuggestions();
                 }
             },
-            cancel: function() {
-                if(this.isOpen()) {
+            cancel: function () {
+                if (this.isOpen()) {
                     //this.value = this._initialValue;
 
                     this.toggleSuggestions();
                 }
             },
-            selectPrevious: function() {
-                if(this.isOpen() && this.selectedIndex) {
+            selectPrevious: function () {
+                if (this.isOpen() && this.selectedIndex) {
                     this.selectedIndex--;
                 }
             },
-            selectNext: function() {
-                if(this.selectedIndex !== null) {
-                    if(this.selectedIndex < this.suggestions.length -1) {
+            selectNext: function () {
+                if (this.selectedIndex !== null) {
+                    if (this.selectedIndex < this.suggestions.length - 1) {
                         this.selectedIndex++;
                     }
-                } else if (! this.isOpen()) {
+                } else if (!this.isOpen()) {
                     this.search(this._input.value);
                 }
             },
-            isOpen: function() {
+            isOpen: function () {
                 return this._suggestionsNode.style.display !== 'none';
             },
 
-            toggleSuggestions: function() {
-                if(this.isOpen()) {
+            toggleSuggestions: function () {
+                if (this.isOpen()) {
                     this._selectedIndex = null;
                     this._suggestionsNode.style.display = 'none';
                 } else {
                     this.search(this._input.value);
                 }
             },
-            setFocus: function() {
+            setFocus: function () {
                 this._input.focus();
                 this._input.setSelectionRange(0, this._input.value.length);
             }
         },
         events: {
-            'keyup' : function(e) {
-                switch(e.keyCode) {
-                case 13: // Enter
-                    this.pick();
-                    break;
-                case 27 : // Escape
-                    this.cancel();
-                    break;
-                case 38: // Up
-                    this.selectPrevious();
-                    break;
-                case 40: // Down
-                    this.selectNext();
-                    break;
-                default:
-                    this.search(this._input.value);
+            'keyup': function (e) {
+                switch (e.keyCode) {
+                    case 13: // Enter
+                        this.pick();
+                        break;
+                    case 27 : // Escape
+                        this.cancel();
+                        break;
+                    case 38: // Up
+                        this.selectPrevious();
+                        break;
+                    case 40: // Down
+                        this.selectNext();
+                        break;
+                    default:
+                        this.search(this._input.value);
                 }
             },
-            'keydown' : function(e) {
-                switch(e.keyCode) {
-                case 9 :  // Tab
-                    this.cancel();
-                    break;
-                case 38: // Up
-                case 40: // Down
-                    e.preventDefault();
-                    break;
+            'keydown': function (e) {
+                switch (e.keyCode) {
+                    case 9 :  // Tab
+                        this.cancel();
+                        break;
+                    case 38: // Up
+                    case 40: // Down
+                        e.preventDefault();
+                        break;
                 }
             },
-            'click:delegate(.x-autocomplete-toggle)' : function(e) {
+            'click:delegate(.x-autocomplete-toggle)': function (e) {
                 var that = this.parentNode;
                 that.toggleSuggestions();
             },
-            'click:delegate(li)' : function(e) {
+            'click:delegate(li)': function (e) {
                 var autocomplete = this.parentNode.parentNode;
                 autocomplete.pick(this);
                 e.stopPropagation();
             },
-            'mouseover:delegate(li)' : function(e) {
+            'mouseover:delegate(li)': function (e) {
                 var autocomplete = this.parentNode.parentNode;
                 autocomplete.selectedIndex = Array.prototype.indexOf.call(autocomplete.getSuggestionNodes(), this);
             },
-            'click' : function(e) {
+            'click': function (e) {
                 this.setFocus();
             }
         }

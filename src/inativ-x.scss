@@ -3,7 +3,6 @@ x-autocomplete {
     display: inline-block;
 
     ul {
-        top: 100%;
         left: 0;
         display: none;
 
@@ -17,6 +16,14 @@ x-autocomplete {
         width: 230px;
         max-height: 400px;
         overflow: auto;
+
+        &.down {
+          top: 100%;
+        }
+
+        &.up {
+          bottom: 100%;
+        }
     }
     li {
         display: block;
