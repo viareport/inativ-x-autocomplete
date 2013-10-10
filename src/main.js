@@ -34,6 +34,7 @@
 
                 this._onSearchCompleted = function () {
                     if (this.suggestions.length) {
+                        this.changeSuggestionsPosition();
                         this.showSuggestions();
                         this.selectedIndex = 0;
 
@@ -47,6 +48,7 @@
                         this._value = null;
                         this._input.value = this._lastValid || '';
                     } else {
+                        this.changeSuggestionsPosition();
                         this.showSuggestions();
                     }
                 }.bind(this);
@@ -71,7 +73,6 @@
                 set: function (values) {
                     this._values = values;
                     this._suggestionValues = values;
-                    this.changeSuggestionsPosition();
                 },
                 get: function () {
                     return this._values;
