@@ -243,6 +243,7 @@
             'keydown': function (e) {
                 switch (e.keyCode) {
                     case 9 :  // Tab
+                    case 27 : // Escape
                         this.cancel();
                         break;
                     case 38: // Up

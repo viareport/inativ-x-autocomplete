@@ -35,7 +35,12 @@
             
             autocomplete.suggestionTemplate = function(value) {
                 return 'joli ' + value.label;
-            }
+            };
+
+            autocomplete.search = function searchDimensionValues(query) {
+                this.suggest(query);
+            };
+
             autocomplete.values = 'Lorem ipsum dolor sit amet consectetur adipiscing elit Donec vitae sagittis nisl sit amet gravida nulla Duis molestie leo dolor vitae malesuada lectus dapibus eget'
                 .split(' ')
                 .map(function(str) {

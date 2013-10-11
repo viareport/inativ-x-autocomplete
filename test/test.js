@@ -149,6 +149,25 @@ testSuite.addTest("Verification de la position de la liste de choix : down", fun
     }, "Le menu déroulant doit ce situer au dessou de l'input");
 });
 
+testSuite.addTest("Verification de la position de la liste de choix : down", function (scenario, asserter) {
+    // Given
+    scenario.exec(function () {
+        var autocomplete = document.querySelector('x-autocomplete');
+        autocomplete.values = ['aa', 'ab', 'b', 'c', 'd a'];
+        autocomplete.setAttribute('suggestionsPosition', 'down');
+    });
+
+    // When
+    scenario.click('x-autocomplete .x-autocomplete-toggle');
+
+    // Then
+    asserter.assertTrue(function () {
+        var input = document.querySelector("x-autocomplete input");
+        var ul = document.querySelector("x-autocomplete ul");
+        return input.offsetTop < ul.offsetTop;
+    }, "Le menu déroulant doit ce situer au dessou de l'input");
+});
+
 document.addEventListener('DOMComponentsLoaded', function(){
     testSuite.run();
 });
