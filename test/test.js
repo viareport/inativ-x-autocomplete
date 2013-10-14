@@ -124,9 +124,9 @@ testSuite.addTest("Verification de la position de la liste de choix : up", funct
 
     // Then
     asserter.assertTrue(function () {
-        var input = document.querySelector("x-autocomplete input");
+        var autocomplete = document.querySelector("x-autocomplete");
         var ul = document.querySelector("x-autocomplete ul");
-        return input.offsetTop > ul.offsetTop;
+        return autocomplete.offsetTop > ul.offsetTop;
     }, "Le menu déroulant doit ce situer au dessus de l'input");
 });
 
@@ -143,9 +143,9 @@ testSuite.addTest("Verification de la position de la liste de choix : down", fun
 
     // Then
     asserter.assertTrue(function () {
-        var input = document.querySelector("x-autocomplete input");
+        var autocomplete = document.querySelector("x-autocomplete");
         var ul = document.querySelector("x-autocomplete ul");
-        return input.offsetTop < ul.offsetTop;
+        return autocomplete.offsetTop < ul.offsetTop;
     }, "Le menu déroulant doit ce situer au dessou de l'input");
 });
 

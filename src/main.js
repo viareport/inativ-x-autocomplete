@@ -1,21 +1,5 @@
 (function () {
     var position = {UP:'up',DOWN:'down'};
-    var nbAutocompleteInserted = 0;
-    var constSuggestionsNode = null;
-    var wrapperSuggestionsNode = null;
-
-    function createSuggestionBlock() {
-        wrapperSuggestionsNode = document.createElement('div');
-        constSuggestionsNode = document.createElement('ul');
-        constSuggestionsNode.style.display = 'none';
-        constSuggestionsNode.classList.add('autocomplete');
-        wrapperSuggestionsNode.appendChild(constSuggestionsNode);
-        document.body.appendChild(wrapperSuggestionsNode);
-    }
-
-    function removeSuggestionBlock() {
-        document.body.removeChild(wrapperSuggestionsNode);
-    }
 
     xtag.register('x-autocomplete', {
         lifecycle: {
@@ -28,6 +12,10 @@
                 this._toggleSuggestions.className = 'x-autocomplete-toggle';
                 this.appendChild(this._toggleSuggestions);
 
+                this._suggestionsNode = document.createElement('ul');
+
+                this._suggestionsNode.style.display = 'none';
+                this.appendChild(this._suggestionsNode);
 
                 this._selectedIndex = null;
 
@@ -72,19 +60,9 @@
                 }.bind(this);
             },
             inserted: function inserted() {
-                if(!nbAutocompleteInserted) {
-                    createSuggestionBlock();
-                }
-
-                nbAutocompleteInserted++;
                 window.document.addEventListener('click', this._clickOutsideListener, false);
             },
             removed: function removed() {
-                nbAutocompleteInserted--;
-
-                if (!nbAutocompleteInserted) {
-                    removeSuggestionBlock();
-                }
                 window.document.removeEventListener('click', this._clickOutsideListener, false);
             },
             attributeChanged: function attributedChanged(attribute) {
@@ -147,23 +125,25 @@
                 var heigthAfterAutocomplete = window.innerHeight - (clientRects[0].top + clientRects[0].height);
                 if(maximumHeight < heigthAfterAutocomplete) {
                     this.changeSuggestionsPosition((clientRects[0].top + clientRects[0].height), clientRects[0].left);
+                } else if(maximumHeight < heigthBeforeAutocomplete) {
+                    this.changeSuggestionsPosition((window.innerHeight - clientRects[0].top), clientRects[0].left, true);
                 } else if (heigthAfterAutocomplete < heigthBeforeAutocomplete) {
                     this.changeSuggestionsPosition(window.innerHeight - clientRects[0].top, clientRects[0].left, true);
-                    constSuggestionsNode.style.height = heigthBeforeAutocomplete + "px";
+                    this._suggestionsNode.style.maxHeight = heigthBeforeAutocomplete + "px";
                 } else {
                     this.changeSuggestionsPosition((clientRects[0].top + clientRects[0].height), clientRects[0].left);
-                    constSuggestionsNode.style.height = heigthAfterAutocomplete + "px";
+                    this._suggestionsNode.style.maxHeight = heigthAfterAutocomplete + "px";
                 }
             },
             changeSuggestionsPosition: function changeSuggestionsPosition(y, x, booleanTop) {
-                constSuggestionsNode.style.top = "";
-                constSuggestionsNode.style.bottom = "";
+                this._suggestionsNode.style.top = "";
+                this._suggestionsNode.style.bottom = "";
                 if(booleanTop) {
-                    constSuggestionsNode.style.bottom = y + "px";
+                    this._suggestionsNode.style.bottom = y + "px";
                 } else {
-                    constSuggestionsNode.style.top = y + "px";
+                    this._suggestionsNode.style.top = y + "px";
                 }
-                constSuggestionsNode.style.left = x + "px";
+                this._suggestionsNode.style.left = x + "px";
             },
             suggest: function (request) {
                 if (request) {
@@ -185,16 +165,14 @@
                 }
             },
             getSuggestionNodes: function () {
-                return constSuggestionsNode.querySelectorAll('li');
+                return this._suggestionsNode.querySelectorAll('li');
             },
             showSuggestions: function () {
-                var suggestionsHtml = this.suggestions.map(function (value) {
+                this._suggestionsNode.innerHTML = this.suggestions.map(function (value) {
                     return '<li class="' + this.suggestionClasses(value) + '">' + this.suggestionTemplate(value) + '</li>';
                 }.bind(this)).join('');
 
-                constSuggestionsNode.innerHTML = suggestionsHtml;
-                constSuggestionsNode.style.display = 'block';
-                //wrapperSuggestionsNode.classList.add('suggestion-display');
+                this._suggestionsNode.style.display = 'block';
             },
             pick: function (selectedNode) {
                 if (this.isOpen()) {
@@ -234,14 +212,13 @@
                 }
             },
             isOpen: function () {
-                return constSuggestionsNode.style.display !== 'none';
+                return this._suggestionsNode.style.display !== 'none';
             },
 
             toggleSuggestions: function () {
                 if (this.isOpen()) {
                     this._selectedIndex = null;
-                    constSuggestionsNode.style.display = 'none';
-                    //wrapperSuggestionsNode.classList.remove('suggestion-display');
+                    this._suggestionsNode.style.display = 'none';
                 } else {
                     this.search(this._input.value);
                 }
@@ -310,7 +287,7 @@
         domXAutocomplete.suggestionClasses = currentDomXAutoComplete.suggestionClasses;
         document.body.appendChild(domXAutocomplete);
         domXAutocomplete.showSuggestions();
-        var maxHeightValue = domXAutocomplete.offsetHeight + constSuggestionsNode.offsetHeight;
+        var maxHeightValue = domXAutocomplete.offsetHeight + domXAutocomplete._suggestionsNode.offsetHeight;
         document.body.removeChild(domXAutocomplete);
         return maxHeightValue;
     }
