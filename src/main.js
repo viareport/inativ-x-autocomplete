@@ -1,5 +1,21 @@
 (function () {
     var position = {UP:'up',DOWN:'down'};
+    var nbAutocompleteInserted = 0;
+    var constSuggestionsNode = null;
+    var wrapperSuggestionsNode = null;
+
+    function createSuggestionBlock() {
+        wrapperSuggestionsNode = document.createElement('div');
+        constSuggestionsNode = document.createElement('ul');
+        constSuggestionsNode.style.display = 'none';
+        constSuggestionsNode.classList.add('autocomplete');
+        wrapperSuggestionsNode.appendChild(constSuggestionsNode);
+        document.body.appendChild(wrapperSuggestionsNode);
+    }
+
+    function removeSuggestionBlock() {
+        document.body.removeChild(wrapperSuggestionsNode);
+    }
 
     xtag.register('x-autocomplete', {
         lifecycle: {
@@ -12,10 +28,6 @@
                 this._toggleSuggestions.className = 'x-autocomplete-toggle';
                 this.appendChild(this._toggleSuggestions);
 
-                this._suggestionsNode = document.createElement('ul');
-
-                this._suggestionsNode.style.display = 'none';
-                this.appendChild(this._suggestionsNode);
 
                 this._selectedIndex = null;
 
@@ -34,7 +46,7 @@
 
                 this._onSearchCompleted = function () {
                     if (this.suggestions.length) {
-                        this.changeSuggestionsPosition();
+                        this.choosePosition();
                         this.showSuggestions();
                         this.selectedIndex = 0;
 
@@ -48,7 +60,7 @@
                         this._value = null;
                         this._input.value = this._lastValid || '';
                     } else {
-                        this.changeSuggestionsPosition();
+                        this.choosePosition();
                         this.showSuggestions();
                     }
                 }.bind(this);
@@ -60,9 +72,19 @@
                 }.bind(this);
             },
             inserted: function inserted() {
+                if(!nbAutocompleteInserted) {
+                    createSuggestionBlock();
+                }
+
+                nbAutocompleteInserted++;
                 window.document.addEventListener('click', this._clickOutsideListener, false);
             },
             removed: function removed() {
+                nbAutocompleteInserted--;
+
+                if (!nbAutocompleteInserted) {
+                    removeSuggestionBlock();
+                }
                 window.document.removeEventListener('click', this._clickOutsideListener, false);
             },
             attributeChanged: function attributedChanged(attribute) {
@@ -118,25 +140,30 @@
             }
         },
         methods: {
-            changeSuggestionsPosition: function changeSuggestionsPosition() {
+            choosePosition: function() {
                 var clientRects = this.getClientRects();
-                var top = 0;
-                if (clientRects.length) {
-                    top = clientRects[0].top;
+                var maximumHeight = calculateMaximumHeight(this);
+                var heigthBeforeAutocomplete = clientRects[0].top;
+                var heigthAfterAutocomplete = window.innerHeight - (clientRects[0].top + clientRects[0].height);
+                if(maximumHeight < heigthAfterAutocomplete) {
+                    this.changeSuggestionsPosition((clientRects[0].top + clientRects[0].height), clientRects[0].left);
+                } else if (heigthAfterAutocomplete < heigthBeforeAutocomplete) {
+                    this.changeSuggestionsPosition(window.innerHeight - clientRects[0].top, clientRects[0].left, true);
+                    constSuggestionsNode.style.height = heigthBeforeAutocomplete + "px";
                 } else {
-                    top = this.offsetTop;
+                    this.changeSuggestionsPosition((clientRects[0].top + clientRects[0].height), clientRects[0].left);
+                    constSuggestionsNode.style.height = heigthAfterAutocomplete + "px";
                 }
-                var domElementMaxHeightValue = top + calculateMaximumHeight(this);
-                var documentBodyMaxHeightValue = window.innerHeight;
-                var classList = this._suggestionsNode.classList;
-                for (var pos in position) {
-                    classList.remove(position[pos]);
-                }
-                if (domElementMaxHeightValue > documentBodyMaxHeightValue) {
-                    this._suggestionsNode.classList.add(position.UP);
+            },
+            changeSuggestionsPosition: function changeSuggestionsPosition(y, x, booleanTop) {
+                constSuggestionsNode.style.top = "";
+                constSuggestionsNode.style.bottom = "";
+                if(booleanTop) {
+                    constSuggestionsNode.style.bottom = y + "px";
                 } else {
-                    this._suggestionsNode.classList.add(position.DOWN);
+                    constSuggestionsNode.style.top = y + "px";
                 }
+                constSuggestionsNode.style.left = x + "px";
             },
             suggest: function (request) {
                 if (request) {
@@ -158,14 +185,16 @@
                 }
             },
             getSuggestionNodes: function () {
-                return this._suggestionsNode.querySelectorAll('li');
+                return constSuggestionsNode.querySelectorAll('li');
             },
             showSuggestions: function () {
-                this._suggestionsNode.innerHTML = this.suggestions.map(function (value) {
+                var suggestionsHtml = this.suggestions.map(function (value) {
                     return '<li class="' + this.suggestionClasses(value) + '">' + this.suggestionTemplate(value) + '</li>';
                 }.bind(this)).join('');
 
-                this._suggestionsNode.style.display = 'block';
+                constSuggestionsNode.innerHTML = suggestionsHtml;
+                constSuggestionsNode.style.display = 'block';
+                //wrapperSuggestionsNode.classList.add('suggestion-display');
             },
             pick: function (selectedNode) {
                 if (this.isOpen()) {
@@ -205,13 +234,14 @@
                 }
             },
             isOpen: function () {
-                return this._suggestionsNode.style.display !== 'none';
+                return constSuggestionsNode.style.display !== 'none';
             },
 
             toggleSuggestions: function () {
                 if (this.isOpen()) {
                     this._selectedIndex = null;
-                    this._suggestionsNode.style.display = 'none';
+                    constSuggestionsNode.style.display = 'none';
+                    //wrapperSuggestionsNode.classList.remove('suggestion-display');
                 } else {
                     this.search(this._input.value);
                 }
@@ -280,7 +310,7 @@
         domXAutocomplete.suggestionClasses = currentDomXAutoComplete.suggestionClasses;
         document.body.appendChild(domXAutocomplete);
         domXAutocomplete.showSuggestions();
-        var maxHeightValue = domXAutocomplete.offsetHeight + domXAutocomplete._suggestionsNode.offsetHeight;
+        var maxHeightValue = domXAutocomplete.offsetHeight + constSuggestionsNode.offsetHeight;
         document.body.removeChild(domXAutocomplete);
         return maxHeightValue;
     }
