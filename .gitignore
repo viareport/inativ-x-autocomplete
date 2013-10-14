@@ -2,7 +2,8 @@
 demo/main.js
 dist/*
 node_modules/
-test/testbuild.js
+test/main.*
+build
 test-result/testem-ci.tap
 *.tgz
 testem*.json

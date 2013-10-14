@@ -243,6 +243,9 @@
                     case 40: // Down
                         this.selectNext();
                         break;
+                    case 39: // Right
+                    case 37: // Left
+                        break;
                     default:
                         this.search(this._input.value);
                 }
