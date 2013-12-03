@@ -58,11 +58,15 @@
                         this.toggleSuggestions();
                     }
                 }.bind(this);
+
+                this._onKeyDown = this.onKeyDown.bind(this);
             },
             inserted: function inserted() {
+                this.addEventListener('keydown', this._onKeyDown, true);
                 window.document.addEventListener('click', this._clickOutsideListener, false);
             },
             removed: function removed() {
+                this.removeEventListener('keydown', this._onKeyDown, true);
                 window.document.removeEventListener('click', this._clickOutsideListener, false);
             },
             attributeChanged: function attributedChanged(attribute) {
@@ -226,42 +230,39 @@
             setFocus: function () {
                 this._input.focus();
                 this._input.setSelectionRange(0, this._input.value.length);
+            },
+            onKeyDown: function(e) {
+                switch (e.keyCode) {
+                case 13: // Enter
+                    this.pick();
+                    break;
+                case 9 :  // Tab
+                case 27 : // Escape
+                    this.cancel();
+                    break;
+                case 38: // Up
+                    this.selectPrevious();
+                    e.preventDefault();
+                    break;
+                case 40: // Down
+                    this.selectNext();
+                    e.preventDefault();
+                    break;
+                case 33: // Page up
+                case 34: // Page down
+                case 35: // End
+                case 36: // Home
+                    e.preventDefault();
+                    break;
+                case 39: // Right
+                case 37: // Left
+                    break;
+                default:
+                    this.search(this._input.value);
+                }
             }
         },
         events: {
-            'keyup': function (e) {
-                switch (e.keyCode) {
-                    case 13: // Enter
-                        this.pick();
-                        break;
-                    case 27 : // Escape
-                        this.cancel();
-                        break;
-                    case 38: // Up
-                        this.selectPrevious();
-                        break;
-                    case 40: // Down
-                        this.selectNext();
-                        break;
-                    case 39: // Right
-                    case 37: // Left
-                        break;
-                    default:
-                        this.search(this._input.value);
-                }
-            },
-            'keydown': function (e) {
-                switch (e.keyCode) {
-                    case 9 :  // Tab
-                    case 27 : // Escape
-                        this.cancel();
-                        break;
-                    case 38: // Up
-                    case 40: // Down
-                        e.preventDefault();
-                        break;
-                }
-            },
             'click:delegate(.x-autocomplete-toggle)': function (e) {
                 var that = this.parentNode;
                 that.toggleSuggestions();

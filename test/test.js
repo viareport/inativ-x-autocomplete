@@ -27,8 +27,8 @@ testSuite.addTest("Autocomplete avec une liste de valeurs ( autocomplete.values 
     });
 
     // When
-    scenario.fill('x-autocomplete input', 'a');// l'événement 'change' déclenche pas l'ouverture de la liste ( .keyboard('x-autocomplete input',"keyup", "A", 65) marche pas)
-    scenario.keyboard('x-autocomplete input',"keyup", "Down", 28);
+    scenario.fill('x-autocomplete input', 'a');// l'événement 'change' déclenche pas l'ouverture de la liste ( .keyboard('x-autocomplete input',"keydown", "A", 65) marche pas)
+    scenario.keyboard('x-autocomplete input',"keydown", "Down", 28);
 
     // Then
     asserter.expect('x-autocomplete').child('ul').to.have.nodeLength(1);
@@ -49,7 +49,7 @@ testSuite.addTest("Autocomplete avec une fonction de recherche ( autocomplete.se
 
     // When
     scenario.fill('x-autocomplete input', 'x');
-    scenario.keyboard('x-autocomplete input',"keyup", "Down", 28);
+    scenario.keyboard('x-autocomplete input',"keydown", "Down", 28);
 
     // Then
     asserter.expect('x-autocomplete').child('ul').to.have.nodeLength(1);
@@ -68,8 +68,8 @@ testSuite.addTest("Lorsqu'on clique en dehors de l'autocomplete, (en particulier
 
         autocomplete.values = ['aa', 'ab', 'b', 'c', 'd a'];
     });
-    scenario.fill('x-autocomplete input', 'a');// l'événement 'change' déclenche pas l'ouverture de la liste ( .keyboard('x-autocomplete input',"keyup", "A", 65) marche pas)
-    scenario.keyboard('x-autocomplete input',"keyup", "Down", 28);
+    scenario.fill('x-autocomplete input', 'a');// l'événement 'change' déclenche pas l'ouverture de la liste ( .keyboard('x-autocomplete input',"keydown", "A", 65) marche pas)
+    scenario.keyboard('x-autocomplete input',"keydown", "Down", 28);
 
     asserter.expect('x-autocomplete').child('ul').to.have.nodeLength(1);
 
