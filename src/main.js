@@ -59,14 +59,18 @@
                     }
                 }.bind(this);
 
+                this._onKeyUp = this.onKeyUp.bind(this);
                 this._onKeyDown = this.onKeyDown.bind(this);
             },
             inserted: function inserted() {
                 this.addEventListener('keydown', this._onKeyDown, true);
+                this.addEventListener('keyup', this._onKeyUp);
                 window.document.addEventListener('click', this._clickOutsideListener, false);
             },
             removed: function removed() {
+                this.cancel();
                 this.removeEventListener('keydown', this._onKeyDown, true);
+                this.removeEventListener('keyup', this._onKeyUp);
                 window.document.removeEventListener('click', this._clickOutsideListener, false);
             },
             attributeChanged: function attributedChanged(attribute) {
@@ -254,6 +258,22 @@
                 case 36: // Home
                     e.preventDefault();
                     break;
+                case 39: // Right
+                case 37: // Left
+                    break;
+                }
+            },
+            onKeyUp: function(e) {
+                switch (e.keyCode) {
+                case 13: // Enter
+                case 9 :  // Tab
+                case 27 : // Escape
+                case 38: // Up
+                case 40: // Down
+                case 33: // Page up
+                case 34: // Page down
+                case 35: // End
+                case 36: // Home
                 case 39: // Right
                 case 37: // Left
                     break;
