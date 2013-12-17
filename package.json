@@ -19,7 +19,7 @@
     "url": "http://viareport.com"
   },
   "dependencies": {
-    "inativ-gruntfile": "0.0.12",
+    "inativ-gruntfile": "~0.0",
     "grunt": "~0.4.1",
     "spatester": "~1.0.29"
   }
